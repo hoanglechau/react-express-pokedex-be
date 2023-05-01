@@ -1,20 +1,36 @@
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+require("dotenv").config();
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
+const cors = require("cors");
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+// routers
+const indexRouter = require("./routes/index");
 
-var app = express();
+const { error } = require("console");
 
-app.use(logger("dev"));
+const app = express();
+
+// middlewares
+app.use(morgan("dev"));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cors());
 
+// routes
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+
+// 404 error
+app.use((req, res) => {
+  res.send(error);
+});
+
+// error handler
+app.use((err, req, res) => {
+  res.status(err.status || 400).send({ errors: { message: err.message } });
+});
 
 module.exports = app;
