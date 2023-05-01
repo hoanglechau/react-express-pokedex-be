@@ -33,4 +33,7 @@ app.use((err, req, res) => {
   res.status(err.status || 400).send({ errors: { message: err.message } });
 });
 
+const port = process.env.PORT;
+console.log(`Server is running on port ${port}`);
+
 module.exports = app;
